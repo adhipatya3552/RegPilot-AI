@@ -1,0 +1,11 @@
+GDPR (General Data Protection Regulation) - EU
+- Must have lawful basis for processing personal data
+- Users must give explicit consent before data collection
+- Right to erasure (right to be forgotten) must be supported
+- Data breaches must be reported within 72 hours
+- Must appoint a Data Protection Officer if processing large scale data
+- Data minimization: only collect what is necessary
+- Privacy by design must be built into products from the start
+- Cross-border data transfers outside EU require adequacy decisions
+- Users must be able to access, correct, and export their data
+- Fines up to 4% of global annual revenue or €20M

@@ -1,0 +1,11 @@
+DPDP Act (Digital Personal Data Protection Act) - India 2023
+- Consent must be obtained before collecting personal data
+- Data must be used only for the purpose it was collected
+- Data Principal (user) has right to access and correct their data
+- Data Fiduciary must ensure data accuracy
+- Cross-border data transfer allowed to notified countries only
+- Significant Data Fiduciaries face stricter obligations
+- Data Protection Board of India handles complaints
+- Children's data requires parental consent
+- Fines up to ₹250 crore for breaches
+- Must have a grievance redressal mechanism

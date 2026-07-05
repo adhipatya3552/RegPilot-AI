@@ -1,0 +1,10 @@
+EU AI Act 2024
+- AI systems classified as: Unacceptable, High Risk, Limited Risk, Minimal Risk
+- High risk AI (hiring, credit, healthcare) requires conformity assessment
+- Must maintain logs and audit trails for high risk AI
+- Transparency required: users must know they are interacting with AI
+- Prohibited: social scoring, real-time biometric surveillance
+- General Purpose AI models must publish training data summary
+- Fines up to €35M or 7% of global revenue
+- Human oversight required for high risk systems
+- Bias testing and fairness documentation required

@@ -1,0 +1,11 @@
+SOC2 (Service Organization Control 2) - USA
+- Five Trust Service Criteria: Security, Availability, Processing Integrity, Confidentiality, Privacy
+- Must implement access controls and multi-factor authentication
+- Encryption required for data at rest and in transit
+- Incident response plan must be documented and tested
+- Vendor risk management program required
+- Regular penetration testing and vulnerability scanning
+- Change management procedures must be documented
+- Audit logs must be maintained and reviewed
+- Annual third-party audit required for Type II certification
+- Employee security training required

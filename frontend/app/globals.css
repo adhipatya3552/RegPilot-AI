@@ -1,0 +1,122 @@
+@import "tailwindcss";
+
+:root {
+  --background: #030712;
+  --foreground: #f9fafb;
+}
+
+@theme {
+  --font-sans: var(--font-plus-jakarta), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), var(--font-geist-mono), monospace;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-federal-bg: #030712;
+  --color-cyber-blue: #1e293b;
+  --color-neon-cyan: #38bdf8;
+  --color-neon-purple: #c084fc;
+  
+  --animate-radar-sweep: radar-sweep 6s linear infinite;
+  --animate-scanning-beam: scanning-beam 3s ease-in-out infinite;
+  --animate-glow-pulse: glow-pulse 3s ease-in-out infinite;
+  --animate-fade-in-up: fade-in-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+  @keyframes radar-sweep {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes scanning-beam {
+    0% {
+      top: 0%;
+      opacity: 0.1;
+    }
+    10% {
+      opacity: 0.7;
+    }
+    90% {
+      opacity: 0.7;
+    }
+    100% {
+      top: 100%;
+      opacity: 0.1;
+    }
+  }
+  @keyframes glow-pulse {
+    0%, 100% {
+      filter: drop-shadow(0 0 2px rgba(56, 189, 248, 0.2)) drop-shadow(0 0 4px rgba(192, 132, 252, 0.1));
+      opacity: 0.8;
+    }
+    50% {
+      filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.5)) drop-shadow(0 0 12px rgba(192, 132, 252, 0.3));
+      opacity: 1;
+    }
+  }
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+/* Cyber Blueprint Grid */
+.cyber-grid {
+  background-size: 50px 50px;
+  background-image: 
+    linear-gradient(to right, rgba(56, 189, 248, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(56, 189, 248, 0.02) 1px, transparent 1px);
+}
+
+.cyber-grid-fine {
+  background-size: 10px 10px;
+  background-image: 
+    linear-gradient(to right, rgba(56, 189, 248, 0.01) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(56, 189, 248, 0.01) 1px, transparent 1px);
+}
+
+/* Custom Scrollbar for Cockpit */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(3, 7, 18, 0.8);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(56, 189, 248, 0.15);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(56, 189, 248, 0.3);
+}
+
+/* Glassmorphism details */
+.glass-panel {
+  background: rgba(11, 15, 25, 0.65);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.glass-panel-glow {
+  box-shadow: 0 0 40px -10px rgba(56, 189, 248, 0.05);
+}
+

@@ -1,0 +1,10 @@
+CCPA (California Consumer Privacy Act) - USA
+- Users can opt out of sale of personal data
+- Right to know what data is collected and why
+- Right to delete personal data on request
+- Must display "Do Not Sell My Personal Information" link
+- Cannot discriminate against users who exercise privacy rights
+- Applies to businesses with $25M+ revenue or 50K+ users data
+- Annual data inventory and mapping required
+- Privacy policy must be updated every 12 months
+- Fines up to $7,500 per intentional violation
