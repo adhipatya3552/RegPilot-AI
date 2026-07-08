@@ -51,6 +51,29 @@ interface ResultData {
   action_plan: ActionPlan;
 }
 
+const getReferenceUrl = (regulation: string) => {
+  const reg = regulation.toLowerCase();
+  if (reg.includes("dpdp") || reg.includes("digital personal data")) {
+    return "https://www.meity.gov.in/static/uploads/2024/06/2bf1f0e9f04e6fb4f8fef35e82c42aa5.pdf";
+  }
+  if (reg.includes("gdpr") || reg.includes("general data protection")) {
+    return "https://gdpr-info.eu/";
+  }
+  if (reg.includes("ai act")) {
+    return "https://artificialintelligenceact.eu/";
+  }
+  if (reg.includes("ccpa") || reg.includes("california")) {
+    return "https://oag.ca.gov/privacy/ccpa";
+  }
+  if (reg.includes("soc 2") || reg.includes("soc2") || reg.includes("trust service")) {
+    return "https://www.aicpa-cima.com/resources/landing/system-and-organization-controls-soc-suite-of-services";
+  }
+  if (reg.includes("rbi") || reg.includes("lending")) {
+    return "https://www.rbi.org.in/";
+  }
+  return "https://www.google.com/search?q=" + encodeURIComponent(regulation + " regulation guidelines");
+};
+
 export default function Home() {
   const [idea, setIdea] = useState("");
   const [region, setRegion] = useState("global");
@@ -674,7 +697,12 @@ export default function Home() {
                                 <p className="mb-2 font-sans">{step.action}</p>
                                 <div className="mt-3 pt-3 border-t border-slate-900/40 flex justify-between items-center text-[10px] font-mono">
                                   <span className="text-slate-600">Audit Scope ID: REG-PLAN-{i + 10}</span>
-                                  <a href="#" className="text-blue-400 hover:underline flex items-center gap-1">
+                                  <a 
+                                    href={getReferenceUrl(step.regulation)} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer" 
+                                    className="text-blue-400 hover:underline flex items-center gap-1"
+                                  >
                                     Browse reference guidelines <ExternalLink className="w-2.5 h-2.5" />
                                   </a>
                                 </div>

@@ -20,7 +20,7 @@ Return ONLY valid JSON:
 Gaps:
 {gaps_text}"""
 
-    result = call_llm(prompt)
+    result = call_llm(prompt, json_mode=True)
     match = re.search(r'\{[\s\S]+\}', result)
     try:
         return json.loads(match.group() if match else result)

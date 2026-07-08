@@ -25,8 +25,21 @@ def load_regulations():
                             metadatas=[{"source": filename}]
                         )
 
-def query_regulations(idea: str, n=10) -> list:
+def query_regulations(idea: str, region: str = "global", n=10) -> list:
     load_regulations()
     embedding = model.encode(idea).tolist()
-    results = collection.query(query_embeddings=[embedding], n_results=n)
+    
+    # Filter by source files depending on region
+    where = None
+    if region == "india":
+        where = {"source": "dpdp.txt"}
+    elif region == "eu":
+        where = {"source": {"$in": ["gdpr.txt", "eu_ai_act.txt"]}}
+    elif region == "us":
+        where = {"source": {"$in": ["ccpa.txt", "soc2.txt"]}}
+        
+    if where:
+        results = collection.query(query_embeddings=[embedding], n_results=n, where=where)
+    else:
+        results = collection.query(query_embeddings=[embedding], n_results=n)
     return results["documents"][0]

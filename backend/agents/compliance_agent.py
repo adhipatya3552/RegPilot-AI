@@ -3,7 +3,7 @@ from utils.rag import query_regulations
 import json, re
 
 def check_compliance(idea: str, region: str) -> dict:
-    relevant_rules = query_regulations(idea)
+    relevant_rules = query_regulations(idea, region)
     rules_text = "\n".join(relevant_rules)
 
     prompt = f"""You are a compliance expert. A startup has this idea:
@@ -27,7 +27,7 @@ Identify compliance gaps. Return ONLY valid JSON:
   "overall_risk": "high or medium or low"
 }}"""
 
-    result = call_llm(prompt)
+    result = call_llm(prompt, json_mode=True)
     match = re.search(r'\{[\s\S]+\}', result)
     try:
         return json.loads(match.group() if match else result)
