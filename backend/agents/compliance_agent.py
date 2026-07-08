@@ -1,4 +1,4 @@
-from utils.groq_client import call_llm
+from utils.fireworks_client import call_llm
 from utils.rag import query_regulations
 import json, re
 

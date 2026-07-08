@@ -1,4 +1,4 @@
-from utils.groq_client import call_llm
+from utils.fireworks_client import call_llm
 import json, re
 
 def generate_actions(gaps: list) -> dict:
