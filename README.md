@@ -37,7 +37,7 @@
 
 ## 🔍 Overview
 
-**RegPilot AI** is an AI-powered compliance copilot designed to help startups proactively detect regulatory risks and establish compliance roadmap items early in their development cycle. Startups submit their concept, select a target regulatory jurisdiction, and customize scope factors (like Generative AI integration, User Privacy features, Fintech constraints, and Healthcare requirements). 
+**RegPilot AI** is an AI-powered compliance copilot designed to help startups proactively detect regulatory risks and establish compliance roadmap items early in their development cycle. Startups submit their concept, select a target regulatory jurisdiction, and customize scope factors (like Generative AI integration, User Privacy features, Fintech constraints, and Healthcare requirements). All LLM inference runs on **AMD Instinct MI300 GPUs** via the Fireworks AI inference platform — no local or non-AMD compute is used for any model call.
 
 The backend runs a multi-agent retrieval-augmented generation (RAG) loop:
 1. **Compliance Agent** queries a vector database ([ChromaDB](https://github.com/chroma-core/chroma)) populated with structural regulation texts, matches them semantically to the startup idea, and issues a structured audit of policy gaps, severity levels, and compliant highlights.
