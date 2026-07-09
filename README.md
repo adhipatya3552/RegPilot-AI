@@ -1,6 +1,6 @@
-# RegPilot AI — Compliance Copilot for Startups ⚖️
-
 <div align="center">
+
+# RegPilot AI — Compliance Copilot for Startups ⚖️
 
 ![RegPilot Logo](https://img.shields.io/badge/RegPilot--AI-Compliance%20Copilot-blue?style=for-the-badge&logo=codeforces&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.100.0-emerald?style=for-the-badge&logo=fastapi)
