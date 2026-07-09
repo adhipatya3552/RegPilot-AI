@@ -130,7 +130,6 @@ The backend runs a multi-agent retrieval-augmented generation (RAG) loop:
 RegPilot AI/
 ├── backend/
 │   ├── agents/
-│   │   ├── __init__.py
 │   │   ├── action_agent.py        # Compiles remediation steps and execution timelines
 │   │   └── compliance_agent.py    # Matches startup ideas to regulations via ChromaDB + LLM
 │   ├── models/
