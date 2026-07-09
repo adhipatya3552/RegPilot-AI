@@ -147,7 +147,7 @@ RegPilot AI/
 │   ├── Dockerfile                 # Multi-stage python image setup
 │   ├── main.py                    # Root FastAPI app declaration with middleware routers
 │   ├── requirements.txt           # Python application dependencies
-│   └── test_groq.py               # Auxiliary connection verification utility
+│   └── test_fireworks_api.py      # Auxiliary connection verification utility
 ├── frontend/
 │   ├── app/
 │   │   ├── layout.tsx             # Root page wrappers and base HTML setups
@@ -339,15 +339,15 @@ RegPilot AI indexes reference items across:
 
 ## 🧪 Testing
 
-The backend includes a Groq testing verification script (`backend/test_groq.py`) to verify network connectivity to API environments outside the local scope.
+The backend includes a Fireworks AI testing verification script (`backend/test_fireworks_api.py`) to verify network connectivity to API environments outside the local scope.
 
 ```bash
 cd backend
-python test_groq.py
+python test_fireworks_api.py
 ```
 Expected Output:
 ```text
-Groq working!
+Fireworks API working!
 ```
 
 ---
