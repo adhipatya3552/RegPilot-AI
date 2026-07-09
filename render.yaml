@@ -3,7 +3,7 @@ services:
     name: regpilot-backend
     runtime: docker
     dockerContext: backend
-    dockerfilePath: Dockerfile
+    dockerfilePath: backend/Dockerfile
     plan: free
     envVars:
       - key: FIREWORKS_API_KEY
