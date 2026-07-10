@@ -11,19 +11,31 @@ REGULATIONS_DIR = os.path.join(os.path.dirname(__file__), "../regulations")
 def load_regulations():
     if collection.count() > 0:
         return
+    
+    all_documents = []
+    all_ids = []
+    all_metadatas = []
+    
     for filename in os.listdir(REGULATIONS_DIR):
         if filename.endswith(".txt"):
-            with open(os.path.join(REGULATIONS_DIR, filename)) as f:
-                lines = [l.strip() for l in f.readlines() if l.strip() and not l.startswith("-") == False]
+            filepath = os.path.join(REGULATIONS_DIR, filename)
+            with open(filepath, "r", encoding="utf-8") as f:
+                # Keep lines starting with '-'
+                lines = [l.strip() for l in f.readlines() if l.strip() and l.strip().startswith("-")]
                 for i, line in enumerate(lines):
-                    if line.startswith("-"):
-                        embedding = model.encode(line).tolist()
-                        collection.add(
-                            documents=[line],
-                            embeddings=[embedding],
-                            ids=[f"{filename}_{i}"],
-                            metadatas=[{"source": filename}]
-                        )
+                    all_documents.append(line)
+                    all_ids.append(f"{filename}_{i}")
+                    all_metadatas.append({"source": filename})
+                    
+    if all_documents:
+        # Encode all clauses in a single batch to maximize CPU utilization and reduce start latency
+        all_embeddings = model.encode(all_documents).tolist()
+        collection.add(
+            documents=all_documents,
+            embeddings=all_embeddings,
+            ids=all_ids,
+            metadatas=all_metadatas
+        )
 
 def query_regulations(idea: str, region: str = "global", n=10) -> list:
     load_regulations()
