@@ -1,17 +1,65 @@
-import chromadb
-from sentence_transformers import SentenceTransformer
 import os
+import json
+import math
+import requests
+from dotenv import load_dotenv
 
-model = SentenceTransformer("all-MiniLM-L6-v2")
-client = chromadb.Client()
-collection = client.get_or_create_collection("regulations")
+load_dotenv()
+
+API_KEY = os.getenv("FIREWORKS_API_KEY")
+BASE_URL = os.getenv("FIREWORKS_BASE_URL", "https://api.fireworks.ai/inference/v1")
 
 REGULATIONS_DIR = os.path.join(os.path.dirname(__file__), "../regulations")
+CACHE_FILE = os.path.join(os.path.dirname(__file__), "../regulations_cache.json")
+
+regulations_db = []
+
+def get_embedding(text: str) -> list:
+    response = requests.post(
+        f"{BASE_URL}/embeddings",
+        headers={
+            "Authorization": f"Bearer {API_KEY}",
+            "Content-Type": "application/json"
+        },
+        json={
+            "model": "nomic-ai/nomic-embed-text-v1.5",
+            "input": text
+        }
+    )
+    response.raise_for_status()
+    return response.json()["data"][0]["embedding"]
+
+def get_embeddings_batch(texts: list) -> list:
+    response = requests.post(
+        f"{BASE_URL}/embeddings",
+        headers={
+            "Authorization": f"Bearer {API_KEY}",
+            "Content-Type": "application/json"
+        },
+        json={
+            "model": "nomic-ai/nomic-embed-text-v1.5",
+            "input": texts
+        }
+    )
+    response.raise_for_status()
+    return [item["embedding"] for item in response.json()["data"]]
 
 def load_regulations():
-    if collection.count() > 0:
+    global regulations_db
+    if regulations_db:
         return
     
+    # Try loading from cache first
+    if os.path.exists(CACHE_FILE):
+        try:
+            with open(CACHE_FILE, "r", encoding="utf-8") as f:
+                regulations_db = json.load(f)
+                if regulations_db:
+                    return
+        except Exception:
+            pass
+            
+    # Cache missing or corrupted; rebuild it
     all_documents = []
     all_ids = []
     all_metadatas = []
@@ -20,7 +68,6 @@ def load_regulations():
         if filename.endswith(".txt"):
             filepath = os.path.join(REGULATIONS_DIR, filename)
             with open(filepath, "r", encoding="utf-8") as f:
-                # Keep lines starting with '-'
                 lines = [l.strip() for l in f.readlines() if l.strip() and l.strip().startswith("-")]
                 for i, line in enumerate(lines):
                     all_documents.append(line)
@@ -28,30 +75,59 @@ def load_regulations():
                     all_metadatas.append({"source": filename})
                     
     if all_documents:
-        # Encode all clauses in a single batch to maximize CPU utilization and reduce start latency
-        all_embeddings = model.encode(all_documents).tolist()
-        collection.add(
-            documents=all_documents,
-            embeddings=all_embeddings,
-            ids=all_ids,
-            metadatas=all_metadatas
-        )
+        embeddings = get_embeddings_batch(all_documents)
+        
+        regulations_db = []
+        for doc, emb, doc_id, meta in zip(all_documents, embeddings, all_ids, all_metadatas):
+            regulations_db.append({
+                "id": doc_id,
+                "document": doc,
+                "embedding": emb,
+                "metadata": meta
+            })
+            
+        try:
+            with open(CACHE_FILE, "w", encoding="utf-8") as f:
+                json.dump(regulations_db, f, indent=2)
+        except Exception:
+            pass
+
+def dot_product(v1, v2):
+    return sum(x * y for x, y in zip(v1, v2))
+
+def magnitude(v):
+    return math.sqrt(sum(x * x for x in v))
+
+def cosine_similarity(v1, v2):
+    mag1 = magnitude(v1)
+    mag2 = magnitude(v2)
+    if not mag1 or not mag2:
+        return 0.0
+    return dot_product(v1, v2) / (mag1 * mag2)
 
 def query_regulations(idea: str, region: str = "global", n=10) -> list:
     load_regulations()
-    embedding = model.encode(idea).tolist()
-    
-    # Filter by source files depending on region
-    where = None
-    if region == "india":
-        where = {"source": "dpdp.txt"}
-    elif region == "eu":
-        where = {"source": {"$in": ["gdpr.txt", "eu_ai_act.txt"]}}
-    elif region == "us":
-        where = {"source": {"$in": ["ccpa.txt", "soc2.txt"]}}
+    if not regulations_db:
+        return []
         
-    if where:
-        results = collection.query(query_embeddings=[embedding], n_results=n, where=where)
-    else:
-        results = collection.query(query_embeddings=[embedding], n_results=n)
-    return results["documents"][0]
+    query_emb = get_embedding(idea)
+    
+    allowed_sources = None
+    if region == "india":
+        allowed_sources = {"dpdp.txt"}
+    elif region == "eu":
+        allowed_sources = {"gdpr.txt", "eu_ai_act.txt"}
+    elif region == "us":
+        allowed_sources = {"ccpa.txt", "soc2.txt"}
+        
+    filtered_db = regulations_db
+    if allowed_sources:
+        filtered_db = [item for item in regulations_db if item["metadata"]["source"] in allowed_sources]
+        
+    scored_items = []
+    for item in filtered_db:
+        sim = cosine_similarity(query_emb, item["embedding"])
+        scored_items.append((sim, item["document"]))
+        
+    scored_items.sort(key=lambda x: x[0], reverse=True)
+    return [doc for _, doc in scored_items[:n]]
