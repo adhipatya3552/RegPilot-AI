@@ -37,3 +37,10 @@ desktop.ini
 *.njsproj
 *.sln
 *.sw?
+
+# AI coding tool configurations
+CLAUDE.md
+AGENTS.md
+skills-lock.json
+.agents/
+

@@ -6,7 +6,6 @@
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.100.0-emerald?style=for-the-badge&logo=fastapi)
 ![Next.js](https://img.shields.io/badge/Next.js-15.0-black?style=for-the-badge&logo=next.js)
 ![TailwindCSS](https://img.shields.io/badge/Tailwind--CSS-3.4-blueviolet?style=for-the-badge&logo=tailwindcss)
-![ChromaDB](https://img.shields.io/badge/ChromaDB-Vector--DB-orange?style=for-the-badge)
 ![Fireworks AI](https://img.shields.io/badge/Fireworks%20AI-DeepSeek--V4-darkblue?style=for-the-badge)
 ![Docker](https://img.shields.io/badge/Docker-Compose-blue?style=for-the-badge&logo=docker)
 
@@ -37,10 +36,10 @@
 
 ## 🔍 Overview
 
-**RegPilot AI** is an AI-powered compliance copilot designed to help startups proactively detect regulatory risks and establish compliance roadmap items early in their development cycle. Startups submit their concept, select a target regulatory jurisdiction, and customize scope factors (like Generative AI integration, User Privacy features, Fintech constraints, and Healthcare requirements). All LLM inference runs on **AMD Instinct MI300 GPUs** via the Fireworks AI inference platform — no local or non-AMD compute is used for any model call.
+**RegPilot AI** is an AI-powered compliance copilot designed to help startups proactively detect regulatory risks and establish compliance roadmap items early in their development cycle. Startups submit their concept, select a target regulatory jurisdiction, and customize scope factors (like Generative AI integration, User Privacy features, Fintech constraints, and Healthcare requirements). All AI inference — both text embeddings and LLM generation — runs on **AMD Instinct MI300 GPUs** via the Fireworks AI inference platform — no local or non-AMD compute is used at all.
 
 The backend runs a multi-agent retrieval-augmented generation (RAG) loop:
-1. **Compliance Agent** queries a vector database ([ChromaDB](https://github.com/chroma-core/chroma)) populated with structural regulation texts, matches them semantically to the startup idea, and issues a structured audit of policy gaps, severity levels, and compliant highlights.
+1. **Compliance Agent** performs cosine-similarity retrieval over Fireworks AI embeddings (`nomic-embed-text-v1.5`), cached locally in `regulations_cache.json` after first computation, matching them semantically to the startup idea, and issues a structured audit of policy gaps, severity levels, and compliant highlights.
 2. **Action Agent** takes the matched policy gaps and compiles a concrete, prioritizable action plan detailing immediate, mid-term (30 days), and long-term (90 days) milestones.
 
 ---
@@ -51,7 +50,7 @@ The backend runs a multi-agent retrieval-augmented generation (RAG) loop:
 |---------|-------------|
 | ⚡ **Instant Compliance Audit** | Paste a startup idea to analyze regulatory conflicts across multiple frameworks in seconds |
 | 🌍 **Multi-Jurisdiction Audits** | Target global, regional, or specific laws (EU, US, India, or general cross-border tech standards) |
-| 🧠 **Intelligent RAG Matching** | Sentence Transformers + ChromaDB match concept details to raw regulation clauses |
+| 🧠 **Intelligent RAG Matching** | Cosine-similarity retrieval over Fireworks AI embeddings (`nomic-embed-text-v1.5`), cached locally in `regulations_cache.json` after first computation |
 | 🛡️ **Dual-Agent Architecture** | Separate agents handle legal gap categorization and operational action-step planning |
 | 🚥 **Severity Classification** | Identifies issues as High, Medium, or Low severity for easier priority triage |
 | 🧭 **Interactive Dial Indicators** | Real-time radar/risk indicators shift visual bounds depending on overall compliance risk rating |
@@ -85,8 +84,8 @@ The backend runs a multi-agent retrieval-augmented generation (RAG) loop:
 │                                                                        │
 │        ┌─────────────────────────────────────────────────────────┐     │
 │        │ 1. Compliance Agent (agents/compliance_agent.py)        │     │
-│        │    - Embeds concept query via SentenceTransformers       │     │
-│        │    - Performs RAG retrieval against ChromaDB            │     │
+│        │    - Embeds query via Fireworks AI (nomic-embed-text-v1.5) │
+│        │    - Cosine-similarity search over local JSON cache      │
 │        │    - Hits Fireworks AI (DeepSeek-V4-Flash)              │     │
 │        │    - Classifies gaps, severity, and compliant points   │     │
 │        └─────────────────────────────┬───────────────────────────┘     │
@@ -117,8 +116,8 @@ The backend runs a multi-agent retrieval-augmented generation (RAG) loop:
 | **Styling** | Tailwind CSS + Custom Ambient Radial Glows | Modern, responsive dark-mode cyber interface |
 | **Icons** | Lucide React | High-quality developer vector indicators |
 | **Backend API** | FastAPI + Python 3.11 | Performant, asynchronous endpoint routing |
-| **Vector DB** | ChromaDB (In-Memory client) | Local lightweight regulatory vector index |
-| **Embeddings** | Sentence Transformers (`all-MiniLM-L6-v2`) | Local fast embedding generation |
+| **Embeddings** | Fireworks AI (`nomic-embed-text-v1.5`) | High-performance text embeddings routed via AMD-hosted Fireworks AI |
+| **Local Cache** | Local JSON Cache (`regulations_cache.json`) | Local in-memory cosine-similarity search over precomputed embeddings |
 | **LLM Inference** | Fireworks AI | Fast execution of DeepSeek-V4-Flash model |
 | **Containerization**| Docker & Docker-Compose | Sandbox container deployment orchestrator |
 
@@ -131,10 +130,10 @@ RegPilot AI/
 ├── backend/
 │   ├── agents/
 │   │   ├── action_agent.py        # Compiles remediation steps and execution timelines
-│   │   └── compliance_agent.py    # Matches startup ideas to regulations via ChromaDB + LLM
+│   │   └── compliance_agent.py    # Matches startup ideas to regulations via cosine-similarity + LLM
 │   ├── models/
 │   │   └── schemas.py             # FastAPI Pydantic schema validation models
-│   ├── regulations/               # Core reference text data indexed in ChromaDB
+│   ├── regulations/               # Core reference text data embedded and cached for RAG
 │   │   ├── ccpa.txt               # CCPA compliance clauses
 │   │   ├── dpdp.txt               # India Digital Personal Data Protection Act clauses
 │   │   ├── eu_ai_act.txt          # EU Artificial Intelligence Act guidelines
@@ -142,7 +141,7 @@ RegPilot AI/
 │   │   └── soc2.txt               # SOC2 Security and Trust service rules
 │   ├── utils/
 │   │   ├── fireworks_client.py    # Helper client to call Fireworks AI DeepSeek models
-│   │   └── rag.py                 # ChromaDB vector initialization & document lookup helper
+│   │   └── rag.py                 # local cosine-similarity retrieval over Fireworks AI embeddings
 │   ├── .env.example               # Template for backend environment configs
 │   ├── Dockerfile                 # Multi-stage python image setup
 │   ├── main.py                    # Root FastAPI app declaration with middleware routers
@@ -255,7 +254,7 @@ Configure these values in the `frontend/.env.local` file:
 ## ⚙️ Agent Workflow
 
 1. **User Input Submission**: The user enters their startup idea (e.g., *"An AI health tracker app that scans prescription images to monitor patient medications"*), toggles compliance scopes, and clicks the region target.
-2. **Retrieval (RAG)**: The concept input is sent to the backend. The backend encodes the concept and queries ChromaDB for the 10 most relevant regulatory clauses associated with the target country/framework.
+2. **Retrieval (RAG)**: The concept input is sent to the backend. The backend encodes the concept using `nomic-embed-text-v1.5` embeddings via Fireworks AI, and queries the local cache using cosine-similarity retrieval for the 10 most relevant regulatory clauses associated with the target country/framework.
 3. **Audit Assessment (Compliance Agent)**: The matched text clauses, user concept, and scopes are submitted to the Fireworks API using DeepSeek-V4-Flash. It assesses the concept against matched rules to highlight compliance gaps, compliant sections, and overall risks.
 4. **Remediation Plan (Action Agent)**: The list of gaps compiled by the Compliance Agent is sent to the Action Agent. It outputs explicit mitigation plans with logical priority timelines.
 5. **Dashboard Presentation**: The frontend renders details into tabs (Overview Dashboard, Compliance Gaps, Compliant Areas, and Action Roadmaps) with distinct severity badges and interactive indicators.
@@ -372,9 +371,7 @@ Fireworks API working!
 
 | Issue | Status | Workaround |
 |-------|--------|-----------|
-| Local SentenceTransformer weights download is slow | Active | Download requires stable internet connection on first execution launch |
 | Mock terminal logs delay actual UI presentation | Active | Terminal print simulations run in ~2.5s for detailed UX effect |
-| ChromaDB instance is transient | Active | Collection rebuilds on backend restart; indices are local in-memory arrays |
 | Rate-limiting of DeepSeek model on free tier | Active | Switch models in backend configs to alternative model keys if limits are hit |
 
 ---
@@ -382,7 +379,7 @@ Fireworks API working!
 ## 🗺️ Roadmap
 
 - [x] Initial FastAPI routing integration
-- [x] Local ChromaDB vector database index for rules
+- [x] Cosine-similarity retrieval over cached Fireworks AI embeddings
 - [x] Multi-region context matching (`india`, `eu`, `us`, `global`)
 - [x] Double-agent loop (Compliance Audit + Action Remediation)
 - [x] Tailwind client dashboard with mock scan logger terminal
